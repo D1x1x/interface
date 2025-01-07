@@ -1,0 +1,48 @@
+<!-- edit_schedule.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Schedule</title>
+</head>
+<body>
+    <h1>Edit Schedule</h1>
+    <form method="POST">
+        <label>Trainer:</label>
+        <select name="id_trainer" required>
+            {% for trainer in trainers %}
+                <option value="{{ trainer.id_trainer }}" {% if trainer.id_trainer == schedule.id_trainer %}selected{% endif %}>
+                    {{ trainer.full_name }}
+                </option>
+            {% endfor %}
+        </select><br>
+
+        <label>Room:</label>
+        <select name="id_rooms" required>
+            {% for room in rooms %}
+                <option value="{{ room.id_rooms }}" {% if room.id_rooms == schedule.id_rooms %}selected{% endif %}>
+                    {{ room.name }}
+                </option>
+            {% endfor %}
+        </select><br>
+
+        <label>Sport Type:</label>
+        <select name="id_sport_types" required>
+            {% for sport_type in sport_types %}
+                <option value="{{ sport_type.id_sport_types }}" {% if sport_type.id_sport_types == schedule.id_sport_types %}selected{% endif %}>
+                    {{ sport_type.name }}
+                </option>
+            {% endfor %}
+        </select><br>
+
+        <label>Day of Week:</label>
+        <input type="text" name="day_of_week" value="{{ schedule.day_of_week }}" required><br>
+
+        <label>Time:</label>
+        <input type="time" name="time" value="{{ schedule.time }}" required><br>
+
+        <button type="submit">Update Schedule</button>
+    </form>
+
+    <a href="{{ url_for('table_view', table_name='schedule') }}">Back to Schedule</a>
+</body>
+</html>

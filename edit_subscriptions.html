@@ -1,0 +1,18 @@
+<!-- edit_subscriptions.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Subscription</title>
+</head>
+<body>
+    <h1>Edit Subscription</h1>
+    <form method="POST">
+        <label>Type of Subscription:</label>
+        <input type="text" name="type_of_subscription" value="{{ subscription.type_of_subscription }}" required><br>
+        <label>Price:</label>
+        <input type="number" step="0.01" name="price" value="{{ subscription.price }}" required><br>
+        <button type="submit">Update Subscription</button>
+    </form>
+    <a href="{{ url_for('table_view', table_name='subscriptions') }}">Back to Subscriptions</a>
+</body>
+</html>

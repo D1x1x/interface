@@ -1,0 +1,49 @@
+<!-- schedule.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule</title>
+</head>
+<body>
+    <h1>Schedule List</h1>
+    <a href="{{ url_for('add_record', table_name='schedule') }}">Add New Schedule</a>
+
+    {% if schedule %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Trainer</th>
+                    <th>Room</th>
+                    <th>Sport Type</th>
+                    <th>Day of Week</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in schedule %}
+                    <tr>
+                        <td>{{ item.id_schedule }}</td>
+                        <td>{{ item.trainer.full_name }}</td>
+                        <td>{{ item.room.name }}</td>
+                        <td>{{ item.sport_type.name }}</td>
+                        <td>{{ item.day_of_week }}</td>
+                        <td>{{ item.time }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_record', table_name='schedule', id_record=item.id_schedule) }}">Edit</a>
+                            <form action="{{ url_for('delete_record', table_name='schedule', id_record=item.id_schedule) }}" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No schedules found.</p>
+    {% endif %}
+</body>
+</html>

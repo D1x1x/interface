@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients</title>
+</head>
+<body>
+    <h1>Clients List</h1>
+
+    <a href="{{ url_for('add_client') }}">Add New Client</a>
+
+    {% if clients %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Date of Birth</th>
+                    <th>Gender</th>
+                    <th>Phone Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                    <tr>
+                        <td>{{ client.id_client }}</td>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.date_of_birth }}</td>
+                        <td>{{ client.gender }}</td>
+                        <td>{{ client.phone_number }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_client', id_client=client.id_client) }}">Edit</a>
+                            <form action="{{ url_for('delete_client', id_client=client.id_client) }}" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No clients found.</p>
+    {% endif %}
+</body>
+</html>

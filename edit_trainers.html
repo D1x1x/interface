@@ -1,0 +1,22 @@
+<!-- edit_trainer.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Trainer</title>
+</head>
+<body>
+    <h1>Edit Trainer</h1>
+    <form method="POST">
+        <label>Full Name:</label>
+        <input type="text" name="full_name" value="{{ trainer.full_name }}" required><br>
+        <label>Date of Birth:</label>
+        <input type="date" name="date_of_birth" value="{{ trainer.date_of_birth }}" required><br>
+        <label>Experience (Years):</label>
+        <input type="number" name="experience" value="{{ trainer.experience }}" required><br>
+        <label>Specialization:</label>
+        <input type="text" name="specialization" value="{{ trainer.specialization }}" required><br>
+        <button type="submit">Update Trainer</button>
+    </form>
+    <a href="{{ url_for('table_view', table_name='trainers') }}">Back to Trainers</a>
+</body>
+</html>

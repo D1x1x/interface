@@ -1,0 +1,39 @@
+<!-- edit_record.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Record</title>
+</head>
+<body>
+    <h1>Edit Record</h1>
+    <form method="POST">
+        <label>Purchase:</label>
+        <select name="id_purchased" required>
+            {% for purchase in purchases %}
+                <option value="{{ purchase.id_purchased }}" {% if purchase.id_purchased == record.id_purchased %}selected{% endif %}>
+                    {{ purchase.client.full_name }} - {{ purchase.subscription.type_of_subscription }}
+                </option>
+            {% endfor %}
+        </select><br>
+
+        <label>Schedule:</label>
+        <select name="id_schedule" required>
+            {% for schedule in schedules %}
+                <option value="{{ schedule.id_schedule }}" {% if schedule.id_schedule == record.id_schedule %}selected{% endif %}>
+                    {{ schedule.trainer.full_name }} - {{ schedule.room.name }} - {{ schedule.sport_type.name }}
+                </option>
+            {% endfor %}
+        </select><br>
+
+        <label>Attendance:</label>
+        <select name="attendance" required>
+            <option value="Да" {% if record.attendance =='Да' %}selected{% endif %}>Yes</option>
+            <option value="Нет" {% if record.attendance =='Нет' %}selected{% endif %}>No</option>
+        </select><br>
+
+        <button type="submit">Update Record</button>
+    </form>
+
+    <a href="{{ url_for('table_view', table_name='records') }}">Back to Records</a>
+</body>
+</html>

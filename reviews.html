@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews</title>
+</head>
+<body>
+    <h1>Reviews List</h1>
+
+    <a href="{{ url_for('add_record', table_name='reviews') }}">Add New Review</a>
+
+    {% if reviews %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Rating</th>
+                    <th>Comments</th>
+                    <th>Date of Review</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                    <tr>
+                        <td>{{ review.id_reviews }}</td>
+                        <td>{{ review.client.full_name }}</td>
+                        <td>{{ review.rating }}</td>
+                        <td>{{ review.comments }}</td>
+                        <td>{{ review.date_of_review }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_record', table_name='reviews', id_record=review.id_reviews) }}">Edit</a>
+                            <form action="{{ url_for('delete_record', table_name='reviews', id_record=review.id_reviews) }}" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No reviews found.</p>
+    {% endif %}
+</body>
+</html>

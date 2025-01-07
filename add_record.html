@@ -1,0 +1,35 @@
+<!-- add_record.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Record</title>
+</head>
+<body>
+    <h1>Add Record</h1>
+    <form method="POST">
+        <label>Purchase:</label>
+        <select name="id_purchased" required>
+            {% for purchase in purchases %}
+                <option value="{{ purchase.id_purchased }}">{{ purchase.client.full_name }} - {{ purchase.subscription.type_of_subscription }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Schedule:</label>
+        <select name="id_schedule" required>
+            {% for schedule in schedules %}
+                <option value="{{ schedule.id_schedule }}">{{ schedule.trainer.full_name }} - {{ schedule.room.name }} - {{ schedule.sport_type.name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Attendance:</label>
+        <select name="attendance" required>
+            <option value="Да">Yes</option>
+            <option value="Нет">No</option>
+        </select><br>
+
+        <button type="submit">Add Record</button>
+    </form>
+
+    <a href="{{ url_for('table_view', table_name='records') }}">Back to Records</a>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!-- records.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Records</title>
+</head>
+<body>
+    <h1>Records List</h1>
+    <a href="{{ url_for('add_record', table_name='records') }}">Add New Record</a>
+
+    {% if records %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Subscription</th>
+                    <th>Trainer</th>
+                    <th>Room</th>
+                    <th>Sport Type</th>
+                    <th>Attendance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record.id_records }}</td>
+                        <td>{{ record.purchase.client.full_name }}</td>
+                        <td>{{ record.purchase.subscription.type_of_subscription }}</td>
+                        <td>{{ record.schedule.trainer.full_name }}</td>
+                        <td>{{ record.schedule.room.name }}</td>
+                        <td>{{ record.schedule.sport_type.name }}</td>
+                        <td>{{ record.attendance }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_record', table_name='records', id_record=record.id_records) }}">Edit</a>
+                            <form action="{{ url_for('delete_record', table_name='records', id_record=record.id_records) }}" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No records found.</p>
+    {% endif %}
+</body>
+</html>

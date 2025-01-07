@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        .password-container {
+            position: relative;
+        }
+        .password-container input {
+            padding-right: 30px; /* Чтобы иконка не накладывалась на текст */
+        }
+        .password-container .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Login</h2>
+    <form method="post">
+        <input type="text" name="username" placeholder="Username" required>
+
+        <div class="password-container">
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <i class="fas fa-eye toggle-password" id="toggle-password"></i> <!-- Иконка для переключения -->
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        // Переключение видимости пароля
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordField = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function() {
+            // Переключаем тип поля между 'password' и 'text'
+            const type = passwordField.type === 'password' ? 'text' : 'password';
+            passwordField.type = type;
+
+            // Переключаем иконку
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
+</body>
+</html>

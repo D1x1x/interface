@@ -1,0 +1,47 @@
+<!-- trainers.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainers</title>
+</head>
+<body>
+    <h1>Trainers List</h1>
+    <a href="{{ url_for('add_record', table_name='trainers') }}">Add New Trainer</a>
+
+    {% if trainers %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Date of Birth</th>
+                    <th>Experience</th>
+                    <th>Specialization</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trainer in trainers %}
+                    <tr>
+                        <td>{{ trainer.id_trainer }}</td>
+                        <td>{{ trainer.full_name }}</td>
+                        <td>{{ trainer.date_of_birth }}</td>
+                        <td>{{ trainer.experience }}</td>
+                        <td>{{ trainer.specialization }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_record', table_name='trainers', id_record=trainer.id_trainer) }}">Edit</a>
+                            <form action="{{ url_for('delete_record', table_name='trainers', id_record=trainer.id_trainer) }}" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No trainers found.</p>
+    {% endif %}
+</body>
+</html>

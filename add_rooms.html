@@ -1,0 +1,18 @@
+<!-- add_rooms.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Room</title>
+</head>
+<body>
+    <h1>Add Room</h1>
+    <form method="POST">
+        <label>Name:</label>
+        <input type="text" name="name" required><br>
+        <label>Capacity:</label>
+        <input type="number" name="capacity" required><br>
+        <button type="submit">Add Room</button>
+    </form>
+    <a href="{{ url_for('table_view', table_name='rooms') }}">Back to Rooms</a>
+</body>
+</html>

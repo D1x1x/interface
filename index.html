@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Добро пожаловать на наш сайт!</h1>
+    </header>
+
+    <main>
+        {% if current_user.is_authenticated %}
+            <p>Здравствуйте, {{ current_user.username }}!</p>
+            <a href="{{ url_for('admin_dashboard') }}">Перейти в панель администратора</a>
+            <a href="{{ url_for('user_dashboard') }}">Перейти в панель пользователя</a>
+            <a href="{{ url_for('logout') }}">Выход</a>
+        {% else %}
+            <p>Пожалуйста, <a href="{{ url_for('login') }}">войдите</a> для доступа к вашему аккаунту.</p>
+        {% endif %}
+    </main>
+</body>
+</html>

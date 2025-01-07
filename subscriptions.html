@@ -1,0 +1,44 @@
+<!-- subscriptions.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriptions</title>
+</head>
+<body>
+    <h1>Subscriptions List</h1>
+
+    <a href="{{ url_for('add_record', table_name='subscriptions') }}">Add New Subscription</a>
+
+    {% if subscriptions %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscription in subscriptions %}
+                    <tr>
+                        <td>{{ subscription.id_subscriptions }}</td>
+                        <td>{{ subscription.type_of_subscription }}</td>
+                        <td>{{ subscription.price }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_record', table_name='subscriptions', id_record=subscription.id_subscriptions) }}">Edit</a>
+                            <form action="{{ url_for('delete_record', table_name='subscriptions', id_record=subscription.id_subscriptions) }}" method="POST" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No subscriptions found.</p>
+    {% endif %}
+</body>
+</html>
