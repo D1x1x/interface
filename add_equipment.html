@@ -1,22 +1,18 @@
-<!-- add_equipment.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Add Equipment</title>
 </head>
 <body>
-    <h1>Add Equipment</h1>
-    <form method="POST">
-        <label>Room:</label>
-        <select name="id_rooms" required>
-            {% for room in rooms %}
-                <option value="{{ room.id_rooms }}">{{ room.name }}</option>
-            {% endfor %}
-        </select><br>
-        <label>Name:</label>
-        <input type="text" name="name" required><br>
-        <button type="submit">Add Equipment</button>
+    <h1>Add New Equipment</h1>
+    <form method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="quantity">Quantity:</label><br>
+        <input type="number" id="quantity" name="quantity" required><br>
+        <input type="submit" value="Add Equipment">
     </form>
-    <a href="{{ url_for('table_view', table_name='equipment') }}">Back to Equipment</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='equipment') }}">Back to Equipment Table</a>
 </body>
 </html>

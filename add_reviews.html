@@ -4,22 +4,21 @@
     <title>Add Review</title>
 </head>
 <body>
-    <h1>Add Review</h1>
-    <form method="POST">
-        <label>Client:</label>
-        <select name="id_client" required>
-            {% for client in clients %}
-                <option value="{{ client.id_client }}">{{ client.full_name }}</option>
+    <h1>Add New Review</h1>
+    <form method="post">
+        <label for="text">Text:</label><br>
+        <input type="text" id="text" name="text" required><br>
+        <label for="rating">Rating:</label><br>
+        <input type="number" id="rating" name="rating" required><br>
+        <label for="client_id">Client:</label><br>
+        <select id="client_id" name="client_id" required>
+            {% for client in Client.query.all() %}
+                <option value="{{ client.id }}">{{ client.full_name }}</option>
             {% endfor %}
         </select><br>
-        <label>Rating:</label>
-        <input type="number" name="rating" min="1" max="5" required><br>
-        <label>Comments:</label>
-        <input type="text" name="comments" required><br>
-        <label>Date of Review:</label>
-        <input type="date" name="date_of_review" required><br>
-        <button type="submit">Add Review</button>
+        <input type="submit" value="Add Review">
     </form>
-    <a href="{{ url_for('table_view', table_name='reviews') }}">Back to Reviews</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='reviews') }}">Back to Reviews Table</a>
 </body>
 </html>

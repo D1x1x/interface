@@ -1,44 +1,46 @@
-<!-- equipment.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equipment</title>
 </head>
 <body>
-    <h1>Equipment List</h1>
+    <h1>Equipment</h1>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-    <a href="{{ url_for('add_record', table_name='equipment') }}">Add New Equipment</a>
-
-    {% if equipment %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Room</th>
-                    <th>Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for eq in equipment %}
-                    <tr>
-                        <td>{{ eq.id_equipment }}</td>
-                        <td>{{ eq.room.name }}</td>
-                        <td>{{ eq.name }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_record', table_name='equipment', id_record=eq.id_equipment) }}">Edit</a>
-                            <form action="{{ url_for('delete_record', table_name='equipment', id_record=eq.id_equipment) }}" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No equipment found.</p>
-    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for equipment in equipment %}
+            <tr>
+                <td>{{ equipment.name }}</td>
+                <td>{{ equipment.quantity }}</td>
+                 <td>
+                   <a href="{{ url_for('edit_equipment', id=equipment.id) }}">Edit</a>
+                   <form method="post" action="{{ url_for('delete_equipment', id=equipment.id) }}" style="display: inline;">
+                    <input type="submit" value="Delete">
+                  </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+        <a href="{{ url_for('add_equipment') }}">Add New Equipment</a>
+         <br>
+    <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

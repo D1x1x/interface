@@ -1,49 +1,50 @@
-<!-- schedule.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule</title>
 </head>
 <body>
-    <h1>Schedule List</h1>
-    <a href="{{ url_for('add_record', table_name='schedule') }}">Add New Schedule</a>
+    <h1>Schedule</h1>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-    {% if schedule %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Trainer</th>
-                    <th>Room</th>
-                    <th>Sport Type</th>
-                    <th>Day of Week</th>
-                    <th>Time</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in schedule %}
-                    <tr>
-                        <td>{{ item.id_schedule }}</td>
-                        <td>{{ item.trainer.full_name }}</td>
-                        <td>{{ item.room.name }}</td>
-                        <td>{{ item.sport_type.name }}</td>
-                        <td>{{ item.day_of_week }}</td>
-                        <td>{{ item.time }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_record', table_name='schedule', id_record=item.id_schedule) }}">Edit</a>
-                            <form action="{{ url_for('delete_record', table_name='schedule', id_record=item.id_schedule) }}" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No schedules found.</p>
-    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Trainer</th>
+                <th>Start Time</th>
+                 <th>End Time</th>
+                 <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedule %}
+            <tr>
+                <td>{{ Room.query.get(schedule.room_id).name if Room.query.get(schedule.room_id) else 'N/A'}}</td>
+                 <td>{{ Trainer.query.get(schedule.trainer_id).full_name if Trainer.query.get(schedule.trainer_id) else 'N/A' }}</td>
+                <td>{{ schedule.start_time }}</td>
+                 <td>{{ schedule.end_time }}</td>
+                   <td>
+                       <a href="{{ url_for('edit_schedule', id=schedule.id) }}">Edit</a>
+                     <form method="post" action="{{ url_for('delete_schedule', id=schedule.id) }}" style="display: inline;">
+                          <input type="submit" value="Delete">
+                     </form>
+                    </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+   <br>
+    <a href="{{ url_for('add_schedule') }}">Add New Schedule</a>
+         <br>
+    <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

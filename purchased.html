@@ -1,52 +1,48 @@
-<!-- purchased.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchases</title>
+    <title>Purchased</title>
 </head>
 <body>
-    <h1>Purchases List</h1>
+    <h1>Purchased</h1>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-    <a href="{{ url_for('add_record', table_name='purchased') }}">Add New Purchase</a>
-
-    {% if purchased %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Client</th>
-                    <th>Subscription</th>
-                    <th>Payment Type</th>
-                    <th>Date of Payment</th>
-                    <th>Subscription Start</th>
-                    <th>Subscription End</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for purchase in purchased %}
-                    <tr>
-                        <td>{{ purchase.id_purchased }}</td>
-                        <td>{{ purchase.client.full_name }}</td>
-                        <td>{{ purchase.subscription.type_of_subscription }}</td>
-                        <td>{{ purchase.payment_type.name }}</td>
-                        <td>{{ purchase.date_of_payment }}</td>
-                        <td>{{ purchase.date_of_subscription_start }}</td>
-                        <td>{{ purchase.date_of_subscription_end }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_record', table_name='purchased', id_record=purchase.id_purchased) }}">Edit</a>
-                            <form action="{{ url_for('delete_record', table_name='purchased', id_record=purchase.id_purchased) }}" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No purchases found.</p>
-    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Client</th>
+                <th>Subscription</th>
+                <th>Purchase Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchased in purchased %}
+            <tr>
+                <td>{{ Client.query.get(purchased.client_id).full_name if Client.query.get(purchased.client_id) else 'N/A' }}</td>
+                <td>{{ Subscription.query.get(purchased.subscription_id).name if Subscription.query.get(purchased.subscription_id) else 'N/A' }}</td>
+                <td>{{ purchased.purchase_date }}</td>
+                  <td>
+                       <a href="{{ url_for('edit_purchased', id=purchased.id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('delete_purchased', id=purchased.id) }}" style="display: inline;">
+                          <input type="submit" value="Delete">
+                        </form>
+                    </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+      <br>
+        <a href="{{ url_for('add_purchased') }}">Add New Purchased</a>
+        <br>
+     <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

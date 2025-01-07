@@ -1,4 +1,3 @@
-<!-- edit_schedule.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,43 +5,30 @@
 </head>
 <body>
     <h1>Edit Schedule</h1>
-    <form method="POST">
-        <label>Trainer:</label>
-        <select name="id_trainer" required>
-            {% for trainer in trainers %}
-                <option value="{{ trainer.id_trainer }}" {% if trainer.id_trainer == schedule.id_trainer %}selected{% endif %}>
-                    {{ trainer.full_name }}
-                </option>
-            {% endfor %}
-        </select><br>
-
-        <label>Room:</label>
-        <select name="id_rooms" required>
-            {% for room in rooms %}
-                <option value="{{ room.id_rooms }}" {% if room.id_rooms == schedule.id_rooms %}selected{% endif %}>
+    <form method="post">
+        <label for="room_id">Room:</label><br>
+        <select id="room_id" name="room_id">
+            {% for room in Room.query.all() %}
+                <option value="{{ room.id }}" {% if room.id == schedule.room_id %}selected{% endif %}>
                     {{ room.name }}
                 </option>
             {% endfor %}
         </select><br>
-
-        <label>Sport Type:</label>
-        <select name="id_sport_types" required>
-            {% for sport_type in sport_types %}
-                <option value="{{ sport_type.id_sport_types }}" {% if sport_type.id_sport_types == schedule.id_sport_types %}selected{% endif %}>
-                    {{ sport_type.name }}
+         <label for="trainer_id">Trainer:</label><br>
+        <select id="trainer_id" name="trainer_id">
+            {% for trainer in Trainer.query.all() %}
+                <option value="{{ trainer.id }}" {% if trainer.id == schedule.trainer_id %}selected{% endif %}>
+                    {{ trainer.full_name }}
                 </option>
             {% endfor %}
         </select><br>
-
-        <label>Day of Week:</label>
-        <input type="text" name="day_of_week" value="{{ schedule.day_of_week }}" required><br>
-
-        <label>Time:</label>
-        <input type="time" name="time" value="{{ schedule.time }}" required><br>
-
-        <button type="submit">Update Schedule</button>
+        <label for="start_time">Start Time:</label><br>
+        <input type="datetime-local" id="start_time" name="start_time" value="{{ schedule.start_time | string }}" required><br>
+        <label for="end_time">End Time:</label><br>
+         <input type="datetime-local" id="end_time" name="end_time"  value="{{ schedule.end_time | string }}" required><br>
+        <input type="submit" value="Update Schedule">
     </form>
-
-    <a href="{{ url_for('table_view', table_name='schedule') }}">Back to Schedule</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='schedule') }}">Back to Schedule Table</a>
 </body>
 </html>

@@ -1,44 +1,32 @@
-<!-- edit_purchased.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Purchase</title>
+    <title>Edit Purchased</title>
 </head>
 <body>
-    <h1>Edit Purchase</h1>
-    <form method="POST">
-        <label>Client:</label>
-        <select name="id_client" required>
-            {% for client in clients %}
-                <option value="{{ client.id_client }}" {% if client.id_client == purchase.id_client %}selected{% endif %}>
+    <h1>Edit Purchased</h1>
+    <form method="post">
+        <label for="client_id">Client:</label><br>
+        <select id="client_id" name="client_id" required>
+             {% for client in Client.query.all() %}
+                <option value="{{ client.id }}" {% if client.id == purchased.client_id %}selected{% endif %}>
                     {{ client.full_name }}
                 </option>
-            {% endfor %}
+             {% endfor %}
         </select><br>
-        <label>Subscription:</label>
-        <select name="id_subscriptions" required>
-            {% for subscription in subscriptions %}
-                <option value="{{ subscription.id_subscriptions }}" {% if subscription.id_subscriptions == purchase.id_subscriptions %}selected{% endif %}>
-                    {{ subscription.type_of_subscription }}
+        <label for="subscription_id">Subscription:</label><br>
+        <select id="subscription_id" name="subscription_id" required>
+             {% for sub in Subscription.query.all() %}
+                <option value="{{ sub.id }}" {% if sub.id == purchased.subscription_id %}selected{% endif %}>
+                    {{ sub.name }}
                 </option>
-            {% endfor %}
+             {% endfor %}
         </select><br>
-        <label>Payment Type:</label>
-        <select name="id_payment_types" required>
-            {% for payment_type in payment_types %}
-                <option value="{{ payment_type.id_payment_types }}" {% if payment_type.id_payment_types == purchase.id_payment_types %}selected{% endif %}>
-                    {{ payment_type.name }}
-                </option>
-            {% endfor %}
-        </select><br>
-        <label>Date of Payment:</label>
-        <input type="date" name="date_of_payment" value="{{ purchase.date_of_payment }}" required><br>
-        <label>Subscription Start:</label>
-        <input type="date" name="date_of_subscription_start" value="{{ purchase.date_of_subscription_start }}" required><br>
-        <label>Subscription End:</label>
-        <input type="date" name="date_of_subscription_end" value="{{ purchase.date_of_subscription_end }}" required><br>
-        <button type="submit">Update Purchase</button>
+        <label for="purchase_date">Purchase Date:</label><br>
+        <input type="date" id="purchase_date" name="purchase_date" value="{{ purchased.purchase_date | string }}" required><br>
+        <input type="submit" value="Update Purchased">
     </form>
-    <a href="{{ url_for('table_view', table_name='purchased') }}">Back to Purchases</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='purchased') }}">Back to Purchased Table</a>
 </body>
 </html>
