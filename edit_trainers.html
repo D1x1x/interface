@@ -8,8 +8,12 @@
     <form method="post">
         <label for="full_name">Full Name:</label><br>
         <input type="text" id="full_name" name="full_name" value="{{ trainer.full_name }}" required><br>
+        <label>Date of Birth:</label>
+        <input type="date" name="date_of_birth" value="{{ trainer.date_of_birth }}" required><br>
           <label for="specialization">Specialization:</label><br>
         <input type="text" id="specialization" name="specialization" value="{{ trainer.specialization }}" required><br>
+        <label for="experience">Experience (years):</label><br>
+        <input type="number" id="experience" name="experience" min="0" value="{{ trainer.experience }}" required><br>
         <input type="submit" value="Update Trainer">
     </form>
     <br>

@@ -5,6 +5,9 @@
 </head>
 <body>
     <h1>Records</h1>
+    <br>
+    <a href="{{ url_for('add_record') }}">Add New Record</a>
+    <br>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul>
@@ -18,31 +21,32 @@
     <table border="1">
         <thead>
             <tr>
-                <th>Client</th>
+                <th>ID</th>
+                <th>Purchased</th>
                 <th>Schedule</th>
                 <th>Record Date</th>
-                 <th>Actions</th>
+                <th>Attendance</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for record in records %}
             <tr>
-                <td>{{ Client.query.get(record.client_id).full_name if Client.query.get(record.client_id) else 'N/A' }}</td>
-                <td>{{ Schedule.query.get(record.schedule_id).id if Schedule.query.get(record.schedule_id) else 'N/A' }}</td>
-                <td>{{ record.record_date }}</td>
-                  <td>
-                        <a href="{{ url_for('edit_record', id=record.id) }}">Edit</a>
-                       <form method="post" action="{{ url_for('delete_record', id=record.id) }}" style="display: inline;">
-                          <input type="submit" value="Delete">
-                       </form>
-                   </td>
+                <td>{{ record.id_records }}</td>
+                <td>{{ record.purchased.id_purchased if record.purchased else 'N/A' }}</td>
+                <td>{{ record.schedule.day_of_week if record.schedule else 'N/A' }} - {{ record.schedule.time if record.schedule else 'N/A' }}</td>
+                <td>{{ record.date_of_record }}</td>
+                <td>{{ record.attendance }}</td>
+                <td>
+                    <a href="{{ url_for('edit_record', id_records=record.id_records) }}">Edit</a>
+                    <form method="post" action="{{ url_for('delete_record', id_records=record.id_records) }}" style="display: inline;">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-        <br>
-    <a href="{{ url_for('add_record') }}">Add New Record</a>
-        <br>
-     <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
+    <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

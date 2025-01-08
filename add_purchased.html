@@ -8,18 +8,37 @@
     <form method="post">
         <label for="client_id">Client:</label><br>
         <select id="client_id" name="client_id" required>
+            <option value="" disabled selected>Select Client</option>
             {% for client in Client.query.all() %}
-                <option value="{{ client.id }}">{{ client.full_name }}</option>
+                <option value="{{ client.id_client }}">{{ client.full_name }}</option>
             {% endfor %}
         </select><br>
+
         <label for="subscription_id">Subscription:</label><br>
         <select id="subscription_id" name="subscription_id" required>
-             {% for sub in Subscription.query.all() %}
-                <option value="{{ sub.id }}">{{ sub.name }}</option>
+            <option value="" disabled selected>Select Subscription</option>
+            {% for sub in Subscription.query.all() %}
+                <option value="{{ sub.id_subscriptions }}">{{ sub.type_of_subscription }}</option>
              {% endfor %}
         </select><br>
+
+        <label for="payment_type_id">Payment Type:</label><br>
+        <select id="payment_type_id" name="payment_type_id" required>
+            <option value="" disabled selected>Select Payment Type</option>
+            {% for payment_type in PaymentType.query.all() %}
+                <option value="{{ payment_type.id_payment_types }}">{{ payment_type.name }}</option>
+            {% endfor %}
+        </select><br>
+
         <label for="purchase_date">Purchase Date:</label><br>
         <input type="date" id="purchase_date" name="purchase_date" required><br>
+
+        <label for="date_of_subscription_start">Subscription Start Date:</label><br>
+        <input type="date" id="date_of_subscription_start" name="date_of_subscription_start" required><br>
+
+        <label for="date_of_subscription_end">Subscription End Date:</label><br>
+        <input type="date" id="date_of_subscription_end" name="date_of_subscription_end" required><br>
+
         <input type="submit" value="Add Purchased">
     </form>
     <br>

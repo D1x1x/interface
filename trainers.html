@@ -5,6 +5,9 @@
 </head>
 <body>
     <h1>Trainers</h1>
+    <br>
+      <a href="{{ url_for('add_trainer') }}">Add New Trainer</a>
+          <br>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul>
@@ -18,19 +21,25 @@
     <table border="1">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Full Name</th>
+                <th>Date of Birth</th>
                 <th>Specialization</th>
+                <th>Experience</th>
                  <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for trainer in trainers %}
             <tr>
+                <td>{{ trainer.id_trainer }}</td>
                 <td>{{ trainer.full_name }}</td>
+                <td>{{ trainer.date_of_birth.strftime('%Y-%m-%d') }}</td>
                 <td>{{ trainer.specialization }}</td>
+                <td>{{ trainer.experience }}</td>
                    <td>
-                       <a href="{{ url_for('edit_trainer', id=trainer.id) }}">Edit</a>
-                       <form method="post" action="{{ url_for('delete_trainer', id=trainer.id) }}" style="display: inline;">
+                       <a href="{{ url_for('edit_trainer', id_trainers=trainer.id_trainer) }}">Edit</a>
+                       <form method="post" action="{{ url_for('delete_trainer', id_trainers=trainer.id_trainer) }}" style="display: inline;">
                            <input type="submit" value="Delete">
                        </form>
                    </td>
@@ -38,9 +47,6 @@
             {% endfor %}
         </tbody>
     </table>
-       <br>
-      <a href="{{ url_for('add_trainer') }}">Add New Trainer</a>
-          <br>
     <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

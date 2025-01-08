@@ -6,20 +6,29 @@
 <body>
     <h1>Edit Record</h1>
     <form method="post">
-       <label for="client_id">Client:</label><br>
-        <select id="client_id" name="client_id">
-            {% for client in Client.query.all() %}
-                <option value="{{ client.id }}" {% if client.id == record.client_id %}selected{% endif %}>{{ client.full_name }}</option>
+        <label for="purchased_id">Purchased:</label><br>
+        <select id="purchased_id" name="purchased_id">
+            {% for purchased in Purchased.query.all() %}
+                <option value="{{ purchased.id_purchased }}" {% if purchased.id_purchased == record.id_purchased %}selected{% endif %}>{{ purchased.id_purchased }}</option>
             {% endfor %}
         </select><br>
-         <label for="schedule_id">Schedule:</label><br>
+
+        <label for="schedule_id">Schedule:</label><br>
         <select id="schedule_id" name="schedule_id">
-           {% for schedule in Schedule.query.all() %}
-                <option value="{{ schedule.id }}" {% if schedule.id == record.schedule_id %}selected{% endif %}>{{ schedule.id }}</option>
+            {% for schedule in Schedule.query.all() %}
+                <option value="{{ schedule.id_schedule }}" {% if schedule.id_schedule == record.id_schedule %}selected{% endif %}>{{ schedule.day_of_week }} - {{ schedule.time }}</option>
             {% endfor %}
         </select><br>
-         <label for="record_date">Record Date:</label><br>
-        <input type="date" id="record_date" name="record_date" value="{{ record.record_date | string }}" required><br>
+
+        <label for="record_date">Record Date:</label><br>
+        <input type="date" id="record_date" name="record_date" value="{{ record.date_of_record }}" required><br>
+
+        <label for="attendance">Attendance:</label><br>
+        <select id="attendance" name="attendance">
+            <option value="Нет" {% if record.attendance =='Нет' %}selected{% endif %}>Нет</option>
+            <option value="Да" {% if record.attendance =='Да' %}selected{% endif %}>Да</option>
+        </select><br>
+
         <input type="submit" value="Update Record">
     </form>
     <br>

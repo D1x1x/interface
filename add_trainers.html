@@ -8,8 +8,16 @@
     <form method="post">
         <label for="full_name">Full Name:</label><br>
         <input type="text" id="full_name" name="full_name" required><br>
-          <label for="specialization">Specialization:</label><br>
+
+        <label>Date of Birth:</label><br>
+        <input type="date" id="date_of_birth" name="date_of_birth" required><br>
+
+        <label for="specialization">Specialization:</label><br>
         <input type="text" id="specialization" name="specialization" required><br>
+
+        <label for="experience">Experience (years):</label><br>
+        <input type="number" id="experience" name="experience" min="0" required><br>
+
         <input type="submit" value="Add Trainer">
     </form>
     <br>

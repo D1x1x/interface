@@ -8,22 +8,39 @@
     <form method="post">
         <label for="client_id">Client:</label><br>
         <select id="client_id" name="client_id" required>
+             <option value="" disabled selected>Select Client</option>
              {% for client in Client.query.all() %}
-                <option value="{{ client.id }}" {% if client.id == purchased.client_id %}selected{% endif %}>
+                <option value="{{ client.id_client }}" {% if client.id_client == purchased.id_client %}selected{% endif %}>
                     {{ client.full_name }}
                 </option>
              {% endfor %}
         </select><br>
         <label for="subscription_id">Subscription:</label><br>
         <select id="subscription_id" name="subscription_id" required>
+             <option value="" disabled selected>Select Subscription</option>
              {% for sub in Subscription.query.all() %}
-                <option value="{{ sub.id }}" {% if sub.id == purchased.subscription_id %}selected{% endif %}>
-                    {{ sub.name }}
+                <option value="{{ sub.id_subscriptions }}" {% if sub.id_subscriptions == purchased.id_subscriptions %}selected{% endif %}>
+                    {{ sub.type_of_subscription }}
                 </option>
              {% endfor %}
         </select><br>
+
+        <label for="payment_type_id">Payment Type:</label><br>
+        <select id="payment_type_id" name="payment_type_id" required>
+            <option value="" disabled selected>Select Payment Type</option>
+            {% for p_type in PaymentType.query.all() %}
+                <option value="{{ p_type.id_payment_types }}" {% if p_type.id_payment_types == purchased.id_payment_types %}selected{% endif %}>
+                    {{ p_type.name }}
+                </option>
+            {% endfor %}
+        </select><br>
+
         <label for="purchase_date">Purchase Date:</label><br>
-        <input type="date" id="purchase_date" name="purchase_date" value="{{ purchased.purchase_date | string }}" required><br>
+        <input type="date" id="purchase_date" name="purchase_date" value="{{ purchased.date_of_payment | string }}" required><br>
+         <label for="date_of_subscription_start">Subscription Start Date:</label><br>
+          <input type="date" id="date_of_subscription_start" name="date_of_subscription_start" value="{{ purchased.date_of_subscription_start | string }}" required><br>
+        <label for="date_of_subscription_end">Subscription End Date:</label><br>
+           <input type="date" id="date_of_subscription_end" name="date_of_subscription_end" value="{{ purchased.date_of_subscription_end | string }}" required><br>
         <input type="submit" value="Update Purchased">
     </form>
     <br>

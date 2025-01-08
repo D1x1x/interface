@@ -7,21 +7,39 @@
     <h1>Add New Schedule</h1>
     <form method="post">
         <label for="room_id">Room:</label><br>
-        <select id="room_id" name="room_id">
+        <select id="room_id" name="room_id" required>
+            <option value="" disabled selected>Select Room</option>
             {% for room in Room.query.all() %}
-                <option value="{{ room.id }}">{{ room.name }}</option>
+                <option value="{{ room.id_rooms }}">{{ room.name }}</option>
             {% endfor %}
         </select><br>
          <label for="trainer_id">Trainer:</label><br>
-        <select id="trainer_id" name="trainer_id">
+        <select id="trainer_id" name="trainer_id" required>
+            <option value="" disabled selected>Select Trainer</option>
             {% for trainer in Trainer.query.all() %}
-                <option value="{{ trainer.id }}">{{ trainer.full_name }}</option>
+                <option value="{{ trainer.id_trainer }}">{{ trainer.full_name }}</option>
             {% endfor %}
         </select><br>
-        <label for="start_time">Start Time:</label><br>
-        <input type="datetime-local" id="start_time" name="start_time" required><br>
-        <label for="end_time">End Time:</label><br>
-          <input type="datetime-local" id="end_time" name="end_time" required><br>
+        <label for="sport_type_id">Sport Type:</label><br>
+        <select id="sport_type_id" name="sport_type_id" required>
+           <option value="" disabled selected>Select Sport Type</option>
+            {% for sport_type in SportType.query.all() %}
+                <option value="{{ sport_type.id_sport_types }}">{{ sport_type.name }}</option>
+            {% endfor %}
+        </select><br>
+        <label for="day_of_week">Day of Week:</label><br>
+        <select id="day_of_week" name="day_of_week" required>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select><br>
+        <label for="time">Time:</label><br>
+        <input type="time" id="time" name="time" required><br>
+
         <input type="submit" value="Add Schedule">
     </form>
     <br>

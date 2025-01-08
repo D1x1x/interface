@@ -6,6 +6,7 @@ from model import db, User, Client, Review, PaymentType, Room, Equipment, SportT
 from config import Config
 import logging
 from datetime import datetime
+from sqlalchemy.orm import joinedload
 
 # Настроим логирование
 logging.basicConfig(level=logging.DEBUG)
@@ -130,7 +131,6 @@ def handle_clients():
         new_client = Client(full_name=full_name, date_of_birth=date_of_birth, gender=gender, phone_number=phone_number)
         db.session.add(new_client)
         db.session.commit()
-        flash('Client added successfully!')
         return redirect(url_for('table_view', table_name='clients'))
 
     clients = Client.query.all()
@@ -152,7 +152,6 @@ def edit_client(id_client):
         client.gender = request.form['gender']
         client.phone_number = request.form['phone_number']
         db.session.commit()
-        flash('Client updated successfully!')
         return redirect(url_for('table_view', table_name='clients'))
 
     return render_template('edit_clients.html', client=client)
@@ -167,7 +166,6 @@ def delete_client(id_client):
     client = Client.query.get_or_404(id_client)
     db.session.delete(client)
     db.session.commit()
-    flash('Client deleted successfully!')
     return redirect(url_for('table_view', table_name='clients'))
 
 
@@ -185,7 +183,6 @@ def add_client():
         new_client = Client(full_name=full_name, date_of_birth=date_of_birth, gender=gender, phone_number=phone_number)
         db.session.add(new_client)
         db.session.commit()
-        flash('Client added successfully!')
         return redirect(url_for('table_view', table_name='clients'))
 
     return render_template('add_client.html')
@@ -194,41 +191,45 @@ def add_client():
 # --- Reviews Routes ---
 def handle_reviews():
     if request.method == 'POST':
-        text = request.form['text']
+        comments = request.form['comments']
         rating = request.form['rating']
-        client_id = request.form['client_id']
-        new_review = Review(text=text, rating=rating, client_id=client_id)
+        id_client = request.form['id_client']
+        date_of_review = request.form['date_of_review']
+
+        new_review = Review(comments=comments, rating=rating, id_client=id_client, date_of_review=date_of_review)
         db.session.add(new_review)
         db.session.commit()
-        flash('Review added successfully!')
         return redirect(url_for('table_view', table_name='reviews'))
 
     reviews = Review.query.all()
-    return render_template('reviews.html', reviews=reviews)
+    for review in reviews:
+        review.client = Client.query.get(review.id_client)
+
+    return render_template('reviews.html', reviews=reviews, Client=Client)
 
 
-@app.route('/edit_review/<int:id_review>', methods=['GET', 'POST'])
+@app.route('/edit_review/<int:id_reviews>', methods=['GET', 'POST'])
 @login_required
-def edit_review(id_review):
-    review = Review.query.get_or_404(id_review)
+def edit_reviews(id_reviews):
+    reviews = Review.query.get_or_404(id_reviews)
     if request.method == 'POST':
-        review.text = request.form['text']
-        review.rating = request.form['rating']
-        review.client_id = request.form['client_id']
+        reviews.comments = request.form['comments']
+        reviews.rating = request.form['rating']
+        reviews.id_client = request.form['id_client']
+        reviews.date_of_review = request.form['date_of_review']
+
         db.session.commit()
-        flash('Review updated successfully!')
         return redirect(url_for('table_view', table_name='reviews'))
 
-    return render_template('edit_reviews.html', review=review)
+    return render_template('edit_reviews.html', reviews=reviews, Client=Client)
 
 
-@app.route('/delete_review/<int:id_review>', methods=['POST'])
+@app.route('/delete_review/<int:id_reviews>', methods=['POST'])
 @login_required
-def delete_review(id_review):
-    review = Review.query.get_or_404(id_review)
-    db.session.delete(review)
+def delete_review(id_reviews):
+    reviews = Review.query.get_or_404(id_reviews)
+    db.session.delete(reviews)
     db.session.commit()
-    flash('Review deleted successfully!')
     return redirect(url_for('table_view', table_name='reviews'))
 
 
@@ -236,71 +237,67 @@ def delete_review(id_review):
 @login_required
 def add_review():
     if request.method == 'POST':
-        text = request.form['text']
+        comments = request.form['comments']
         rating = request.form['rating']
-        client_id = request.form['client_id']
-        new_review = Review(text=text, rating=rating, client_id=client_id)
+        id_client = request.form['id_client']
+        date_of_review = request.form['date_of_review']
+        new_review = Review(comments=comments, rating=rating, id_client=id_client, date_of_review=date_of_review)
         db.session.add(new_review)
         db.session.commit()
-        flash('Review added successfully!')
         return redirect(url_for('table_view', table_name='reviews'))
-    return render_template('add_review.html')
 
+    return render_template('add_review.html', Client=Client)
 
 # --- Payment Types Routes ---
 def handle_payment_types():
     if request.method == 'POST':
         name = request.form['name']
-        new_payment_type = PaymentType(name=name)
-        db.session.add(new_payment_type)
+        new_payment_types = PaymentType(name=name)
+        db.session.add(new_payment_types)
         db.session.commit()
-        flash('Payment Type added successfully!')
         return redirect(url_for('table_view', table_name='payment_types'))
 
     payment_types = PaymentType.query.all()
-    return render_template('payment_types.html', payment_types=payment_types)
+    return render_template('payment_types.html', payment_types=payment_types, PaymentType=PaymentType)
 
 
-@app.route('/edit_payment_types/<int:id_payment_types>', methods=['GET', 'POST'])
+@app.route('/edit_payment_type/<int:id_payment_types>', methods=['GET', 'POST'])
 @login_required
-def edit_payment_type(id_payment_types):
+def edit_payment_types(id_payment_types):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
     payment_types = PaymentType.query.get_or_404(id_payment_types)
     if request.method == 'POST':
         payment_types.name = request.form['name']
         db.session.commit()
-        flash('Payment Type updated successfully!')
         return redirect(url_for('table_view', table_name='payment_types'))
 
-    return render_template('edit_payment_types.html', payment_type=payment_types)
+    return render_template('edit_payment_types.html', payment_types=payment_types, PaymentType=PaymentType)
 
 
-@app.route('/delete_payment_type/<int:id_payment_type>', methods=['POST'])
+@app.route('/delete_payment_type/<int:id_payment_types>', methods=['POST'])
 @login_required
-def delete_payment_type(id_payment_types):
+def delete_payment_types(id_payment_types):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    payment_type = PaymentType.query.get_or_404(id_payment_types)
-    db.session.delete(payment_type)
+    payment_types = PaymentType.query.get_or_404(id_payment_types)
+    db.session.delete(payment_types)
     db.session.commit()
-    flash('Payment Type deleted successfully!')
     return redirect(url_for('table_view', table_name='payment_types'))
 
 
-@app.route('/add_payment_type', methods=['GET', 'POST'])
+@app.route('/add_payment_types', methods=['GET', 'POST'])
 @login_required
-def add_payment_type():
+def add_payment_types():
     if current_user.role != 'admin':
         return redirect(url_for('index'))
     if request.method == 'POST':
         name = request.form['name']
-        new_payment_type = PaymentType(name=name)
-        db.session.add(new_payment_type)
+        new_payment_types = PaymentType(name=name)
+        db.session.add(new_payment_types)
         db.session.commit()
-        flash('Payment Type added successfully!')
         return redirect(url_for('table_view', table_name='payment_types'))
-    return render_template('add_payment_type.html')
+    return render_template('add_payment_types.html', PaymentType=PaymentType)
 
 
 # --- Rooms Routes ---
@@ -315,15 +312,15 @@ def handle_rooms():
         return redirect(url_for('table_view', table_name='rooms'))
 
     rooms = Room.query.all()
-    return render_template('rooms.html', rooms=rooms)
+    return render_template('rooms.html', rooms=rooms, Room=Room)
 
 
-@app.route('/edit_room/<int:id_room>', methods=['GET', 'POST'])
+@app.route('/edit_room/<int:id_rooms>', methods=['GET', 'POST'])
 @login_required
-def edit_room(id_room):
+def edit_room(id_rooms):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    room = Room.query.get_or_404(id_room)
+    room = Room.query.get_or_404(id_rooms)
     if request.method == 'POST':
         room.name = request.form['name']
         room.capacity = request.form['capacity']
@@ -331,15 +328,15 @@ def edit_room(id_room):
         flash('Room updated successfully!')
         return redirect(url_for('table_view', table_name='rooms'))
 
-    return render_template('edit_rooms.html', room=room)
+    return render_template('edit_rooms.html', room=room, Room=Room)
 
 
-@app.route('/delete_room/<int:id_room>', methods=['POST'])
+@app.route('/delete_room/<int:id_rooms>', methods=['POST'])
 @login_required
-def delete_room(id_room):
+def delete_room(id_rooms):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    room = Room.query.get_or_404(id_room)
+    room = Room.query.get_or_404(id_rooms)
     db.session.delete(room)
     db.session.commit()
     flash('Room deleted successfully!')
@@ -359,21 +356,21 @@ def add_room():
         db.session.commit()
         flash('Room added successfully!')
         return redirect(url_for('table_view', table_name='rooms'))
-    return render_template('add_room.html')
+    return render_template('add_rooms.html', Room=Room)
 
 
 # --- Equipment Routes ---
 def handle_equipment():
     if request.method == 'POST':
         name = request.form['name']
-        quantity = request.form['quantity']
-        new_equipment = Equipment(name=name, quantity=quantity)
+        gym = request.form['gym']
+        new_equipment = Equipment(name=name, gym=gym)
         db.session.add(new_equipment)
         db.session.commit()
         flash('Equipment added successfully!')
         return redirect(url_for('table_view', table_name='equipment'))
     equipment = Equipment.query.all()
-    return render_template('equipment.html', equipment=equipment)
+    return render_template('equipment.html', equipment=equipment, Equipment=Equipment)
 
 
 @app.route('/edit_equipment/<int:id_equipment>', methods=['GET', 'POST'])
@@ -381,14 +378,19 @@ def handle_equipment():
 def edit_equipment(id_equipment):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
+
+    rooms = Room.query.all()  # Получаем список всех залов
     equipment = Equipment.query.get_or_404(id_equipment)
+
     if request.method == 'POST':
         equipment.name = request.form['name']
-        equipment.quantity = request.form['quantity']
+        equipment.id_rooms = request.form['gym']  # Обновляем id_rooms
         db.session.commit()
         flash('Equipment updated successfully!')
         return redirect(url_for('table_view', table_name='equipment'))
-    return render_template('edit_equipment.html', equipment=equipment)
+
+    return render_template('edit_equipment.html', equipment=equipment, rooms=rooms)
+
 
 
 @app.route('/delete_equipment/<int:id_equipment>', methods=['POST'])
@@ -408,15 +410,20 @@ def delete_equipment(id_equipment):
 def add_equipment():
     if current_user.role != 'admin':
         return redirect(url_for('index'))
+
+    rooms = Room.query.all()  # Получаем список всех залов
     if request.method == 'POST':
         name = request.form['name']
-        quantity = request.form['quantity']
-        new_equipment = Equipment(name=name, quantity=quantity)
+        gym = request.form['gym']  # Используем правильный параметр 'gym'
+        new_equipment = Equipment(name=name, id_rooms=gym)  # id_rooms, а не gym_id
         db.session.add(new_equipment)
         db.session.commit()
         flash('Equipment added successfully!')
         return redirect(url_for('table_view', table_name='equipment'))
-    return render_template('add_equipment.html')
+
+    return render_template('add_equipment.html', rooms=rooms)
+
+
 
 
 # --- Sport Types Routes ---
@@ -430,29 +437,29 @@ def handle_sport_types():
         return redirect(url_for('table_view', table_name='sport_types'))
 
     sport_types = SportType.query.all()
-    return render_template('sport_types.html', sport_types=sport_types)
+    return render_template('sport_types.html', sport_types=sport_types, SportType=SportType)
 
 
-@app.route('/edit_sport_type/<int:id_sport_type>', methods=['GET', 'POST'])
+@app.route('/edit_sport_type/<int:id_sport_types>', methods=['GET', 'POST'])
 @login_required
-def edit_sport_type(id_sport_type):
+def edit_sport_type(id_sport_types):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    sport_type = SportType.query.get_or_404(id_sport_type)
+    sport_type = SportType.query.get_or_404(id_sport_types)
     if request.method == 'POST':
         sport_type.name = request.form['name']
         db.session.commit()
         flash('Sport Type updated successfully!')
         return redirect(url_for('table_view', table_name='sport_types'))
-    return render_template('edit_sport_type.html', sport_type=sport_type)
+    return render_template('edit_sport_types.html', sport_type=sport_type, SportType=SportType)
 
 
-@app.route('/delete_sport_type/<int:id_sport_type>', methods=['POST'])
+@app.route('/delete_sport_type/<int:id_sport_types>', methods=['POST'])
 @login_required
-def delete_sport_type(id_sport_type):
+def delete_sport_type(id_sport_types):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    sport_type = SportType.query.get_or_404(id_sport_type)
+    sport_type = SportType.query.get_or_404(id_sport_types)
     db.session.delete(sport_type)
     db.session.commit()
     flash('Sport Type deleted successfully!')
@@ -471,47 +478,45 @@ def add_sport_type():
         db.session.commit()
         flash('Sport Type added successfully!')
         return redirect(url_for('table_view', table_name='sport_types'))
-    return render_template('add_sport_type.html')
+    return render_template('add_sport_types.html', SportType=SportType)
 
 
 # --- Subscriptions Routes ---
 def handle_subscriptions():
     if request.method == 'POST':
         name = request.form['name']
-        duration = request.form['duration']
         price = request.form['price']
-        new_subscription = Subscription(name=name, duration=duration, price=price)
+        new_subscription = Subscription(name=name, price=price)
         db.session.add(new_subscription)
         db.session.commit()
         flash('Subscription added successfully!')
         return redirect(url_for('table_view', table_name='subscriptions'))
 
     subscriptions = Subscription.query.all()
-    return render_template('subscriptions.html', subscriptions=subscriptions)
+    return render_template('subscriptions.html', subscriptions=subscriptions, Subscription=Subscription)
 
 
-@app.route('/edit_subscription/<int:id_subscription>', methods=['GET', 'POST'])
+@app.route('/edit_subscription/<int:id_subscriptions>', methods=['GET', 'POST'])
 @login_required
-def edit_subscription(id_subscription):
+def edit_subscription(id_subscriptions):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    subscription = Subscription.query.get_or_404(id_subscription)
+    subscription = Subscription.query.get_or_404(id_subscriptions)
     if request.method == 'POST':
-        subscription.name = request.form['name']
-        subscription.duration = request.form['duration']
+        subscription.type_of_subscription = request.form['name']
         subscription.price = request.form['price']
         db.session.commit()
         flash('Subscription updated successfully!')
         return redirect(url_for('table_view', table_name='subscriptions'))
-    return render_template('edit_subscription.html', subscription=subscription)
+    return render_template('edit_subscriptions.html', subscription=subscription, Subscription=Subscription)
 
 
-@app.route('/delete_subscription/<int:id_subscription>', methods=['POST'])
+@app.route('/delete_subscription/<int:id_subscriptions>', methods=['POST'])
 @login_required
-def delete_subscription(id_subscription):
+def delete_subscription(id_subscriptions):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    subscription = Subscription.query.get_or_404(id_subscription)
+    subscription = Subscription.query.get_or_404(id_subscriptions)
     db.session.delete(subscription)
     db.session.commit()
     flash('Subscription deleted successfully!')
@@ -525,30 +530,27 @@ def add_subscription():
         return redirect(url_for('index'))
     if request.method == 'POST':
         name = request.form['name']
-        duration = request.form['duration']
         price = request.form['price']
-        new_subscription = Subscription(name=name, duration=duration, price=price)
+        new_subscription = Subscription(type_of_subscription=name, price=price)
         db.session.add(new_subscription)
         db.session.commit()
         flash('Subscription added successfully!')
         return redirect(url_for('table_view', table_name='subscriptions'))
-    return render_template('add_subscription.html')
+    return render_template('add_subscriptions.html', Subscription=Subscription)
 
 
 # --- Purchased Routes ---
+@app.route('/purchased')
+@login_required
 def handle_purchased():
-    if request.method == 'POST':
-        client_id = request.form['client_id']
-        subscription_id = request.form['subscription_id']
-        purchase_date = request.form['purchase_date']
-        new_purchased = Purchased(client_id=client_id, subscription_id=subscription_id, purchase_date=purchase_date)
-        db.session.add(new_purchased)
-        db.session.commit()
-        flash('Purchased added successfully!')
-        return redirect(url_for('table_view', table_name='purchased'))
-
     purchased = Purchased.query.all()
-    return render_template('purchased.html', purchased=purchased)
+    for purchase in purchased:
+        purchase.client = Client.query.get(purchase.id_client)
+        purchase.subscription = Subscription.query.get(purchase.id_subscriptions)
+        purchase.payment_type = PaymentType.query.get(purchase.id_payment_types)
+
+    return render_template('purchased.html', purchased=purchased, Client=Client, Subscription=Subscription,
+                           PaymentType=PaymentType)
 
 
 @app.route('/edit_purchased/<int:id_purchased>', methods=['GET', 'POST'])
@@ -556,13 +558,19 @@ def handle_purchased():
 def edit_purchased(id_purchased):
     purchased = Purchased.query.get_or_404(id_purchased)
     if request.method == 'POST':
-        purchased.client_id = request.form['client_id']
-        purchased.subscription_id = request.form['subscription_id']
-        purchased.purchase_date = request.form['purchase_date']
+        purchased.id_client = request.form['client_id']
+        purchased.id_subscriptions = request.form['subscription_id']
+        purchased.date_of_payment = request.form['purchase_date']
+        purchased.id_payment_types = request.form['payment_type_id']
+        purchased.date_of_subscription_start = request.form['date_of_subscription_start']
+        purchased.date_of_subscription_end = request.form['date_of_subscription_end']
+
         db.session.commit()
         flash('Purchased updated successfully!')
         return redirect(url_for('table_view', table_name='purchased'))
-    return render_template('edit_purchased.html', purchased=purchased)
+
+    return render_template('edit_purchased.html', purchased=purchased, Client=Client, Subscription=Subscription,
+                           PaymentType=PaymentType)
 
 
 @app.route('/delete_purchased/<int:id_purchased>', methods=['POST'])
@@ -575,56 +583,80 @@ def delete_purchased(id_purchased):
     return redirect(url_for('table_view', table_name='purchased'))
 
 
+from datetime import datetime
+
 @app.route('/add_purchased', methods=['GET', 'POST'])
 @login_required
 def add_purchased():
     if request.method == 'POST':
+        # Получаем значения из формы
         client_id = request.form['client_id']
         subscription_id = request.form['subscription_id']
+        payment_type_id = request.form['payment_type_id']
         purchase_date = request.form['purchase_date']
-        new_purchased = Purchased(client_id=client_id, subscription_id=subscription_id, purchase_date=purchase_date)
+        date_of_subscription_start = request.form['date_of_subscription_start']
+        date_of_subscription_end = request.form['date_of_subscription_end']
+
+
+
+        # Создаем новый объект Purchased и сохраняем в базу
+        new_purchased = Purchased(
+            id_client=client_id,
+            id_subscriptions=subscription_id,
+            date_of_payment=purchase_date,
+            id_payment_types=payment_type_id,
+            date_of_subscription_start=date_of_subscription_start,
+            date_of_subscription_end=date_of_subscription_end
+        )
+
         db.session.add(new_purchased)
         db.session.commit()
         flash('Purchased added successfully!')
         return redirect(url_for('table_view', table_name='purchased'))
-    return render_template('add_purchased.html')
+
+    return render_template('add_purchased.html', Client=Client, Subscription=Subscription, PaymentType=PaymentType)
+
 
 
 # --- Trainers Routes ---
 def handle_trainers():
     if request.method == 'POST':
         full_name = request.form['full_name']
+        date_of_birth = request.form['date_of_birth']
         specialization = request.form['specialization']
-        new_trainer = Trainer(full_name=full_name, specialization=specialization)
+        experience = request.form['experience']
+        new_trainer = Trainer(full_name=full_name, date_of_birth=date_of_birth, specialization=specialization, experience=experience)
         db.session.add(new_trainer)
         db.session.commit()
         flash('Trainer added successfully!')
         return redirect(url_for('table_view', table_name='trainers'))
     trainers = Trainer.query.all()
-    return render_template('trainers.html', trainers=trainers)
+    return render_template('trainers.html', trainers=trainers, Trainer=Trainer)
 
 
-@app.route('/edit_trainer/<int:id_trainer>', methods=['GET', 'POST'])
+@app.route('/edit_trainer/<int:id_trainers>', methods=['GET', 'POST'])
 @login_required
-def edit_trainer(id_trainer):
+def edit_trainer(id_trainers):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    trainer = Trainer.query.get_or_404(id_trainer)
+    trainer = Trainer.query.get_or_404(id_trainers)
     if request.method == 'POST':
         trainer.full_name = request.form['full_name']
+        trainer.date_of_birth = request.form['date_of_birth']
         trainer.specialization = request.form['specialization']
+        trainer.experience = request.form['experience']
         db.session.commit()
         flash('Trainer updated successfully!')
         return redirect(url_for('table_view', table_name='trainers'))
-    return render_template('edit_trainer.html', trainer=trainer)
+    return render_template('edit_trainers.html', trainer=trainer, Trainer=Trainer)
 
 
-@app.route('/delete_trainer/<int:id_trainer>', methods=['POST'])
+@app.route('/delete_trainer/<int:id_trainers>', methods=['POST'])
 @login_required
-def delete_trainer(id_trainer):
+def delete_trainer(id_trainers):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    trainer = Trainer.query.get_or_404(id_trainer)
+    trainer = Trainer.query.get_or_404(id_trainers)
     db.session.delete(trainer)
     db.session.commit()
     flash('Trainer deleted successfully!')
@@ -638,29 +670,47 @@ def add_trainer():
         return redirect(url_for('index'))
     if request.method == 'POST':
         full_name = request.form['full_name']
+        date_of_birth = request.form['date_of_birth']
         specialization = request.form['specialization']
-        new_trainer = Trainer(full_name=full_name, specialization=specialization)
+        experience = request.form['experience']
+        new_trainer = Trainer(full_name=full_name, date_of_birth=date_of_birth, specialization=specialization, experience=experience)
         db.session.add(new_trainer)
         db.session.commit()
         flash('Trainer added successfully!')
         return redirect(url_for('table_view', table_name='trainers'))
-    return render_template('add_trainer.html')
+    return render_template('add_trainers.html', Trainer=Trainer)
 
 
-# --- Schedule Routes ---
+@app.route('/schedule', methods=['GET', 'POST'])
+@login_required
 def handle_schedule():
     if request.method == 'POST':
         room_id = request.form['room_id']
         trainer_id = request.form['trainer_id']
-        start_time = request.form['start_time']
-        end_time = request.form['end_time']
-        new_schedule = Schedule(room_id=room_id, trainer_id=trainer_id, start_time=start_time, end_time=end_time)
+        sport_type_id = request.form['sport_type_id']
+        day_of_week = request.form['day_of_week']  # День недели как строка
+        time = request.form['time']
+
+        new_schedule = Schedule(
+            id_schedule=None,  # ID не передается, так как база данных сама сгенерирует его
+            id_rooms=room_id,
+            id_trainer=trainer_id,
+            id_sport_types=sport_type_id,
+            day_of_week=day_of_week,  # Сохраняем день недели
+            time=time
+        )
         db.session.add(new_schedule)
         db.session.commit()
         flash('Schedule added successfully!')
-        return redirect(url_for('table_view', table_name='schedule'))
+        return redirect(url_for('handle_schedule'))
+
     schedule = Schedule.query.all()
-    return render_template('schedule.html', schedule=schedule)
+    for schedul in schedule:
+        schedul.room = Room.query.get(schedul.id_rooms)
+        schedul.trainer = Trainer.query.get(schedul.id_trainer)
+        schedul.sport_type = SportType.query.get(schedul.id_sport_types)
+
+    return render_template('schedule.html', schedule=schedule, Room=Room, Trainer=Trainer, SportType=SportType)
 
 
 @app.route('/edit_schedule/<int:id_schedule>', methods=['GET', 'POST'])
@@ -668,16 +718,21 @@ def handle_schedule():
 def edit_schedule(id_schedule):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
+
     schedule = Schedule.query.get_or_404(id_schedule)
+
     if request.method == 'POST':
-        schedule.room_id = request.form['room_id']
-        schedule.trainer_id = request.form['trainer_id']
-        schedule.start_time = request.form['start_time']
-        schedule.end_time = request.form['end_time']
+        schedule.id_rooms = request.form['room_id']
+        schedule.id_trainer = request.form['trainer_id']
+        schedule.id_sport_types = request.form['sport_type_id']
+        schedule.day_of_week = request.form['day_of_week']  # Обновляем день недели
+        schedule.time = request.form['time']
+
         db.session.commit()
         flash('Schedule updated successfully!')
-        return redirect(url_for('table_view', table_name='schedule'))
-    return render_template('edit_schedule.html', schedule=schedule)
+        return redirect(url_for('handle_schedule'))
+
+    return render_template('edit_schedule.html', schedule=schedule, Room=Room, Trainer=Trainer, SportType=SportType)
 
 
 @app.route('/delete_schedule/<int:id_schedule>', methods=['POST'])
@@ -685,11 +740,12 @@ def edit_schedule(id_schedule):
 def delete_schedule(id_schedule):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
+
     schedule = Schedule.query.get_or_404(id_schedule)
     db.session.delete(schedule)
     db.session.commit()
     flash('Schedule deleted successfully!')
-    return redirect(url_for('table_view', table_name='schedule'))
+    return redirect(url_for('handle_schedule'))
 
 
 @app.route('/add_schedule', methods=['GET', 'POST'])
@@ -697,56 +753,89 @@ def delete_schedule(id_schedule):
 def add_schedule():
     if current_user.role != 'admin':
         return redirect(url_for('index'))
+
     if request.method == 'POST':
         room_id = request.form['room_id']
         trainer_id = request.form['trainer_id']
-        start_time = request.form['start_time']
-        end_time = request.form['end_time']
-        new_schedule = Schedule(room_id=room_id, trainer_id=trainer_id, start_time=start_time, end_time=end_time)
+        sport_type_id = request.form['sport_type_id']
+        day_of_week = request.form['day_of_week']  # День недели
+        time = request.form['time']  # Время
+
+        new_schedule = Schedule(
+            id_schedule=None,  # ID не передается, так как база данных сама сгенерирует его
+            id_rooms=room_id,
+            id_trainer=trainer_id,
+            id_sport_types=sport_type_id,
+            day_of_week=day_of_week,  # Сохраняем день недели
+            time=time
+        )
         db.session.add(new_schedule)
         db.session.commit()
         flash('Schedule added successfully!')
-        return redirect(url_for('table_view', table_name='schedule'))
-    return render_template('add_schedule.html')
+        return redirect(url_for('handle_schedule'))  # Перенаправляем на страницу с расписанием
+
+    return render_template('add_schedule.html', Room=Room, Trainer=Trainer, SportType=SportType)
 
 
-# --- Records Routes ---
+
+@app.route('/records', methods=['GET', 'POST'])
+@login_required
 def handle_records():
     if request.method == 'POST':
-        client_id = request.form['client_id']
+        purchased_id = request.form['purchased_id']  # Используем purchased_id
         schedule_id = request.form['schedule_id']
         record_date = request.form['record_date']
-        new_record = Record(client_id=client_id, schedule_id=schedule_id, record_date=record_date)
+        attendance = request.form['attendance']
+
+        new_record = Record(
+            id_purchased=purchased_id,  # Используем purchased_id
+            id_schedule=schedule_id,
+            date_of_record=record_date,
+            attendance=attendance
+        )
+
         db.session.add(new_record)
         db.session.commit()
         flash('Record added successfully!')
         return redirect(url_for('table_view', table_name='records'))
+
+    # Получаем все записи
     records = Record.query.all()
-    return render_template('records.html', records=records)
+
+    for record in records:
+        record.purchased = Purchased.query.get(record.id_purchased)  # Получаем purchased для каждой записи
+        record.schedule = Schedule.query.get(record.id_schedule)  # Получаем schedule для каждой записи
+
+    return render_template('records.html', records=records, Purchased=Purchased, Schedule=Schedule)
 
 
-@app.route('/edit_record/<int:id_record>', methods=['GET', 'POST'])
+@app.route('/edit_record/<int:id_records>', methods=['GET', 'POST'])
 @login_required
-def edit_record(id_record):
+def edit_record(id_records):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    record = Record.query.get_or_404(id_record)
+
+    record = Record.query.get_or_404(id_records)
+
     if request.method == 'POST':
-        record.client_id = request.form['client_id']
-        record.schedule_id = request.form['schedule_id']
-        record.record_date = request.form['record_date']
+        record.id_purchased = request.form['purchased_id']  # Обновляем purchased_id
+        record.id_schedule = request.form['schedule_id']
+        record.date_of_record = request.form['record_date']
+        record.attendance = request.form['attendance']
         db.session.commit()
         flash('Record updated successfully!')
         return redirect(url_for('table_view', table_name='records'))
-    return render_template('edit_record.html', record=record)
+
+    return render_template('edit_record.html', record=record, Purchased=Purchased, Schedule=Schedule)
 
 
-@app.route('/delete_record/<int:id_record>', methods=['POST'])
+@app.route('/delete_record/<int:id_records>', methods=['POST'])
 @login_required
-def delete_record(id_record):
+def delete_record(id_records):
     if current_user.role != 'admin':
         return redirect(url_for('index'))
-    record = Record.query.get_or_404(id_record)
+
+    record = Record.query.get_or_404(id_records)
     db.session.delete(record)
     db.session.commit()
     flash('Record deleted successfully!')
@@ -758,16 +847,26 @@ def delete_record(id_record):
 def add_record():
     if current_user.role != 'admin':
         return redirect(url_for('index'))
+
     if request.method == 'POST':
-        client_id = request.form['client_id']
+        purchased_id = request.form['purchased_id']  # Используем purchased_id
         schedule_id = request.form['schedule_id']
         record_date = request.form['record_date']
-        new_record = Record(client_id=client_id, schedule_id=schedule_id, record_date=record_date)
+        attendance = request.form['attendance']
+
+        new_record = Record(
+            id_purchased=purchased_id,  # Учитываем purchased
+            id_schedule=schedule_id,
+            date_of_record=record_date,
+            attendance=attendance
+        )
         db.session.add(new_record)
         db.session.commit()
         flash('Record added successfully!')
         return redirect(url_for('table_view', table_name='records'))
-    return render_template('add_record.html')
+
+    return render_template('add_record.html', Purchased=Purchased, Schedule=Schedule)
+
 
 
 # Запуск приложения

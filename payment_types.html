@@ -5,6 +5,9 @@
 </head>
 <body>
     <h1>Payment Types</h1>
+    <br>
+    <a href="{{ url_for('add_payment_types') }}">Add New Payment Type</a>
+    <br>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul>
@@ -18,6 +21,7 @@
     <table border="1">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Actions</th>
             </tr>
@@ -25,10 +29,11 @@
         <tbody>
             {% for payment_type in payment_types %}
             <tr>
+                <td>{{ payment_type.id_payment_types }}</td>
                 <td>{{ payment_type.name }}</td>
                 <td>
-                   <a href="{{ url_for('edit_payment_type', id=payment_type.id) }}">Edit</a>
-                   <form method="post" action="{{ url_for('delete_payment_type', id=payment_type.id) }}" style="display: inline;">
+                   <a href="{{ url_for('edit_payment_types', id_payment_types=payment_type.id_payment_types) }}">Edit</a>
+                   <form method="post" action="{{ url_for('delete_payment_types', id_payment_types=payment_type.id_payment_types) }}" style="display: inline;">
                     <input type="submit" value="Delete">
                   </form>
                 </td>
@@ -36,9 +41,6 @@
             {% endfor %}
         </tbody>
     </table>
-    <br>
-    <a href="{{ url_for('add_payment_type') }}">Add New Payment Type</a>
-    <br>
      <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

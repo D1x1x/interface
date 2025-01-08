@@ -8,10 +8,19 @@
     <form method="post">
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name" value="{{ equipment.name }}" required><br>
-        <label for="quantity">Quantity:</label><br>
-        <input type="number" id="quantity" name="quantity" value="{{ equipment.quantity }}" required><br>
-         <input type="submit" value="Update Equipment">
+
+        <label for="gym">Gym:</label><br>
+        <select id="gym" name="gym" required>
+            {% for room in rooms %}
+                <option value="{{ room.id_rooms }}" {% if room.id_rooms == equipment.id_rooms %}selected{% endif %}>
+                    {{ room.name }}
+                </option>
+            {% endfor %}
+        </select><br>
+
+        <input type="submit" value="Update Equipment">
     </form>
+
     <br>
     <a href="{{ url_for('table_view', table_name='equipment') }}">Back to Equipment Table</a>
 </body>

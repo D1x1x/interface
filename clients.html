@@ -43,5 +43,6 @@
     {% else %}
         <p>No clients found.</p>
     {% endif %}
+    <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

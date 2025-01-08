@@ -7,25 +7,45 @@
     <h1>Edit Schedule</h1>
     <form method="post">
         <label for="room_id">Room:</label><br>
-        <select id="room_id" name="room_id">
+        <select id="room_id" name="room_id" required>
+           <option value="" disabled selected>Select Room</option>
             {% for room in Room.query.all() %}
-                <option value="{{ room.id }}" {% if room.id == schedule.room_id %}selected{% endif %}>
+                <option value="{{ room.id_rooms }}" {% if room.id_rooms == schedule.id_rooms %}selected{% endif %}>
                     {{ room.name }}
                 </option>
             {% endfor %}
         </select><br>
          <label for="trainer_id">Trainer:</label><br>
-        <select id="trainer_id" name="trainer_id">
+        <select id="trainer_id" name="trainer_id" required>
+            <option value="" disabled selected>Select Trainer</option>
             {% for trainer in Trainer.query.all() %}
-                <option value="{{ trainer.id }}" {% if trainer.id == schedule.trainer_id %}selected{% endif %}>
+                <option value="{{ trainer.id_trainer }}" {% if trainer.id_trainer == schedule.id_trainer %}selected{% endif %}>
                     {{ trainer.full_name }}
                 </option>
             {% endfor %}
         </select><br>
-        <label for="start_time">Start Time:</label><br>
-        <input type="datetime-local" id="start_time" name="start_time" value="{{ schedule.start_time | string }}" required><br>
-        <label for="end_time">End Time:</label><br>
-         <input type="datetime-local" id="end_time" name="end_time"  value="{{ schedule.end_time | string }}" required><br>
+        <label for="sport_type_id">Sport Type:</label><br>
+        <select id="sport_type_id" name="sport_type_id" required>
+            <option value="" disabled selected>Select Sport Type</option>
+            {% for sport_type in SportType.query.all() %}
+                <option value="{{ sport_type.id_sport_types }}" {% if sport_type.id_sport_types == schedule.id_sport_types %}selected{% endif %}>
+                    {{ sport_type.name }}
+                </option>
+            {% endfor %}
+        </select><br>
+        <label for="day_of_week">Day of Week:</label><br>
+        <select id="day_of_week" name="day_of_week" required>
+            <option value="Monday" {% if schedule.day_of_week =='Monday' %}selected{% endif %}>Monday</option>
+            <option value="Tuesday" {% if schedule.day_of_week =='Tuesday' %}selected{% endif %}>Tuesday</option>
+            <option value="Wednesday" {% if schedule.day_of_week =='Wednesday' %}selected{% endif %}>Wednesday</option>
+            <option value="Thursday" {% if schedule.day_of_week =='Thursday' %}selected{% endif %}>Thursday</option>
+            <option value="Friday" {% if schedule.day_of_week =='Friday' %}selected{% endif %}>Friday</option>
+            <option value="Saturday" {% if schedule.day_of_week =='Saturday' %}selected{% endif %}>Saturday</option>
+            <option value="Sunday" {% if schedule.day_of_week =='Sunday' %}selected{% endif %}>Sunday</option>
+        </select><br>
+        <label for="time">Time:</label><br>
+        <input type="time" id="time" name="time" value="{{ schedule.time.strftime('%H:%M') }}" required><br>
+
         <input type="submit" value="Update Schedule">
     </form>
     <br>
