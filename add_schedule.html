@@ -1,42 +1,48 @@
-<!-- add_schedule.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Add Schedule</title>
 </head>
 <body>
-    <h1>Add Schedule</h1>
-    <form method="POST">
-        <label>Trainer:</label>
-        <select name="id_trainer" required>
-            {% for trainer in trainers %}
-                <option value="{{ trainer.id_trainer }}">{{ trainer.full_name }}</option>
-            {% endfor %}
-        </select><br>
-
-        <label>Room:</label>
-        <select name="id_rooms" required>
-            {% for room in rooms %}
+    <h1>Add New Schedule</h1>
+    <form method="post">
+        <label for="room_id">Room:</label><br>
+        <select id="room_id" name="room_id" required>
+            <option value="" disabled selected>Select Room</option>
+            {% for room in Room.query.all() %}
                 <option value="{{ room.id_rooms }}">{{ room.name }}</option>
             {% endfor %}
         </select><br>
-
-        <label>Sport Type:</label>
-        <select name="id_sport_types" required>
-            {% for sport_type in sport_types %}
+         <label for="trainer_id">Trainer:</label><br>
+        <select id="trainer_id" name="trainer_id" required>
+            <option value="" disabled selected>Select Trainer</option>
+            {% for trainer in Trainer.query.all() %}
+                <option value="{{ trainer.id_trainer }}">{{ trainer.full_name }}</option>
+            {% endfor %}
+        </select><br>
+        <label for="sport_type_id">Sport Type:</label><br>
+        <select id="sport_type_id" name="sport_type_id" required>
+           <option value="" disabled selected>Select Sport Type</option>
+            {% for sport_type in SportType.query.all() %}
                 <option value="{{ sport_type.id_sport_types }}">{{ sport_type.name }}</option>
             {% endfor %}
         </select><br>
+        <label for="day_of_week">Day of Week:</label><br>
+        <select id="day_of_week" name="day_of_week" required>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select><br>
+        <label for="time">Time:</label><br>
+        <input type="time" id="time" name="time" required><br>
 
-        <label>Day of Week:</label>
-        <input type="text" name="day_of_week" required><br>
-
-        <label>Time:</label>
-        <input type="time" name="time" required><br>
-
-        <button type="submit">Add Schedule</button>
+        <input type="submit" value="Add Schedule">
     </form>
-
-    <a href="{{ url_for('table_view', table_name='schedule') }}">Back to Schedule</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='schedule') }}">Back to Schedule Table</a>
 </body>
 </html>

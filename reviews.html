@@ -1,47 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviews</title>
 </head>
 <body>
-    <h1>Reviews List</h1>
+    <h1>Reviews</h1>
+        <br>
+    <a href="{{ url_for('add_review') }}">Add New Review</a>
+        <br>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-    <a href="{{ url_for('add_record', table_name='reviews') }}">Add New Review</a>
-
-    {% if reviews %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Client</th>
-                    <th>Rating</th>
-                    <th>Comments</th>
-                    <th>Date of Review</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for review in reviews %}
-                    <tr>
-                        <td>{{ review.id_reviews }}</td>
-                        <td>{{ review.client.full_name }}</td>
-                        <td>{{ review.rating }}</td>
-                        <td>{{ review.comments }}</td>
-                        <td>{{ review.date_of_review }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_record', table_name='reviews', id_record=review.id_reviews) }}">Edit</a>
-                            <form action="{{ url_for('delete_record', table_name='reviews', id_record=review.id_reviews) }}" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No reviews found.</p>
-    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Comments</th>
+                <th>Rating</th>
+                <th>Client</th>
+                <th>Date of Review</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+                <td>{{ review.id_reviews }}</td>
+                <td>{{ review.comments }}</td>
+                <td>{{ review.rating }}</td>
+                <td>{{ review.client.full_name if review.client else 'N/A' }}</td>
+                <td>{{ review.date_of_review.strftime('%Y-%m-%d') }}</td>
+                 <td>
+                  <a href="{{ url_for('edit_reviews', id_reviews=review.id_reviews) }}">Edit</a>
+                  <form method="post" action="{{ url_for('delete_review', id_reviews=review.id_reviews) }}" style="display: inline;">
+                    <input type="submit" value="Delete">
+                  </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<br>
+     <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
+<br>
 </body>
 </html>

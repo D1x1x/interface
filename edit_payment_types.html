@@ -1,4 +1,3 @@
-<!-- edit_payment_types.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,11 +5,12 @@
 </head>
 <body>
     <h1>Edit Payment Type</h1>
-    <form method="POST">
-        <label>Name:</label>
-        <input type="text" name="name" value="{{ payment_type.name }}" required><br>
-        <button type="submit">Update Payment Type</button>
+    <form method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" value="{{ payment_types.name }}" required><br>
+        <input type="submit" value="Update Payment Type">
     </form>
-    <a href="{{ url_for('table_view', table_name='payment_types') }}">Back to Payment Types</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='payment_types') }}">Back to Payment Types Table</a>
 </body>
 </html>

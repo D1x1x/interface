@@ -1,51 +1,52 @@
-<!-- records.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Records</title>
 </head>
 <body>
-    <h1>Records List</h1>
-    <a href="{{ url_for('add_record', table_name='records') }}">Add New Record</a>
+    <h1>Records</h1>
+    <br>
+    <a href="{{ url_for('add_record') }}">Add New Record</a>
+    <br>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-    {% if records %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Client</th>
-                    <th>Subscription</th>
-                    <th>Trainer</th>
-                    <th>Room</th>
-                    <th>Sport Type</th>
-                    <th>Attendance</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for record in records %}
-                    <tr>
-                        <td>{{ record.id_records }}</td>
-                        <td>{{ record.purchase.client.full_name }}</td>
-                        <td>{{ record.purchase.subscription.type_of_subscription }}</td>
-                        <td>{{ record.schedule.trainer.full_name }}</td>
-                        <td>{{ record.schedule.room.name }}</td>
-                        <td>{{ record.schedule.sport_type.name }}</td>
-                        <td>{{ record.attendance }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_record', table_name='records', id_record=record.id_records) }}">Edit</a>
-                            <form action="{{ url_for('delete_record', table_name='records', id_record=record.id_records) }}" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No records found.</p>
-    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Purchased</th>
+                <th>Schedule</th>
+                <th>Record Date</th>
+                <th>Attendance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.id_records }}</td>
+                <td>{{ record.purchased.id_purchased if record.purchased else 'N/A' }}</td>
+                <td>{{ record.schedule.day_of_week if record.schedule else 'N/A' }} - {{ record.schedule.time if record.schedule else 'N/A' }}</td>
+                <td>{{ record.date_of_record }}</td>
+                <td>{{ record.attendance }}</td>
+                <td>
+                    <a href="{{ url_for('edit_record', id_records=record.id_records) }}">Edit</a>
+                    <form method="post" action="{{ url_for('delete_record', id_records=record.id_records) }}" style="display: inline;">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

@@ -13,8 +13,8 @@
         <input type="date" name="date_of_birth" value="{{ client.Date_of_birth }}" required><br>
         <label>Gender:</label>
         <select name="gender" required>
-            <option value="Male" {% if client.Gender =='Male' %}selected{% endif %}>Male</option>
-            <option value="Female" {% if client.Gender =='Female' %}selected{% endif %}>Female</option>
+            <option value="Male" {% if client.Gender =='Male' %}selected{% endif %}>Мужской</option>
+            <option value="Female" {% if client.Gender =='Female' %}selected{% endif %}>Женский</option>
         </select><br>
         <label>Phone Number:</label>
         <input type="text" name="phone_number" value="{{ client.Phone_number }}" required><br>

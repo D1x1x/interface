@@ -1,47 +1,52 @@
-<!-- trainers.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trainers</title>
 </head>
 <body>
-    <h1>Trainers List</h1>
-    <a href="{{ url_for('add_record', table_name='trainers') }}">Add New Trainer</a>
+    <h1>Trainers</h1>
+    <br>
+      <a href="{{ url_for('add_trainer') }}">Add New Trainer</a>
+          <br>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-    {% if trainers %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Full Name</th>
-                    <th>Date of Birth</th>
-                    <th>Experience</th>
-                    <th>Specialization</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for trainer in trainers %}
-                    <tr>
-                        <td>{{ trainer.id_trainer }}</td>
-                        <td>{{ trainer.full_name }}</td>
-                        <td>{{ trainer.date_of_birth }}</td>
-                        <td>{{ trainer.experience }}</td>
-                        <td>{{ trainer.specialization }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_record', table_name='trainers', id_record=trainer.id_trainer) }}">Edit</a>
-                            <form action="{{ url_for('delete_record', table_name='trainers', id_record=trainer.id_trainer) }}" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No trainers found.</p>
-    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Date of Birth</th>
+                <th>Specialization</th>
+                <th>Experience</th>
+                 <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trainer in trainers %}
+            <tr>
+                <td>{{ trainer.id_trainer }}</td>
+                <td>{{ trainer.full_name }}</td>
+                <td>{{ trainer.date_of_birth.strftime('%Y-%m-%d') }}</td>
+                <td>{{ trainer.specialization }}</td>
+                <td>{{ trainer.experience }}</td>
+                   <td>
+                       <a href="{{ url_for('edit_trainer', id_trainers=trainer.id_trainer) }}">Edit</a>
+                       <form method="post" action="{{ url_for('delete_trainer', id_trainers=trainer.id_trainer) }}" style="display: inline;">
+                           <input type="submit" value="Delete">
+                       </form>
+                   </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

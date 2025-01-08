@@ -1,35 +1,37 @@
-<!-- add_record.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Add Record</title>
 </head>
 <body>
-    <h1>Add Record</h1>
-    <form method="POST">
-        <label>Purchase:</label>
-        <select name="id_purchased" required>
-            {% for purchase in purchases %}
-                <option value="{{ purchase.id_purchased }}">{{ purchase.client.full_name }} - {{ purchase.subscription.type_of_subscription }}</option>
+    <h1>Add New Record</h1>
+    <form method="post">
+        <label for="purchased_id">Purchased:</label><br>
+        <select id="purchased_id" name="purchased_id">
+            {% for purchased in Purchased.query.all() %}
+                <option value="{{ purchased.id_purchased }}">{{ purchased.id_purchased }}</option>
             {% endfor %}
         </select><br>
 
-        <label>Schedule:</label>
-        <select name="id_schedule" required>
-            {% for schedule in schedules %}
-                <option value="{{ schedule.id_schedule }}">{{ schedule.trainer.full_name }} - {{ schedule.room.name }} - {{ schedule.sport_type.name }}</option>
+        <label for="schedule_id">Schedule:</label><br>
+        <select id="schedule_id" name="schedule_id">
+            {% for schedule in Schedule.query.all() %}
+                <option value="{{ schedule.id_schedule }}">{{ schedule.day_of_week }} - {{ schedule.time }}</option>
             {% endfor %}
         </select><br>
 
-        <label>Attendance:</label>
-        <select name="attendance" required>
-            <option value="Да">Yes</option>
-            <option value="Нет">No</option>
+        <label for="record_date">Record Date:</label><br>
+        <input type="date" id="record_date" name="record_date" required><br>
+
+        <label for="attendance">Attendance:</label><br>
+        <select id="attendance" name="attendance">
+            <option value="Present">Нет</option>
+            <option value="Absent">Да</option>
         </select><br>
 
-        <button type="submit">Add Record</button>
+        <input type="submit" value="Add Record">
     </form>
-
-    <a href="{{ url_for('table_view', table_name='records') }}">Back to Records</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='records') }}">Back to Records Table</a>
 </body>
 </html>

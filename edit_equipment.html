@@ -1,4 +1,3 @@
-<!-- edit_equipment.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,19 +5,23 @@
 </head>
 <body>
     <h1>Edit Equipment</h1>
-    <form method="POST">
-        <label>Room:</label>
-        <select name="id_rooms" required>
+    <form method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" value="{{ equipment.name }}" required><br>
+
+        <label for="gym">Gym:</label><br>
+        <select id="gym" name="gym" required>
             {% for room in rooms %}
                 <option value="{{ room.id_rooms }}" {% if room.id_rooms == equipment.id_rooms %}selected{% endif %}>
                     {{ room.name }}
                 </option>
             {% endfor %}
         </select><br>
-        <label>Name:</label>
-        <input type="text" name="name" value="{{ equipment.name }}" required><br>
-        <button type="submit">Update Equipment</button>
+
+        <input type="submit" value="Update Equipment">
     </form>
-    <a href="{{ url_for('table_view', table_name='equipment') }}">Back to Equipment</a>
+
+    <br>
+    <a href="{{ url_for('table_view', table_name='equipment') }}">Back to Equipment Table</a>
 </body>
 </html>

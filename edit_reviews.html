@@ -5,23 +5,22 @@
 </head>
 <body>
     <h1>Edit Review</h1>
-    <form method="POST">
-        <label>Client:</label>
-        <select name="id_client" required>
-            {% for client in clients %}
-                <option value="{{ client.id_client }}" {% if client.id_client == review.id_client %}selected{% endif %}>
-                    {{ client.full_name }}
-                </option>
+    <form method="post">
+        <label for="comments">Comments:</label><br>
+        <input type="text" id="comments" name="comments" value="{{ reviews.comments }}" required><br>
+        <label for="rating">Rating (1-5):</label><br>
+        <input type="number" id="rating" name="rating" value="{{ reviews.rating }}" min="1" max="5" required><br>
+         <label>Date of review:</label>
+        <input type="date" name="date_of_review" value="{{ reviews.date_of_review }}" required><br>
+        <label for="id_client">Client:</label><br>
+        <select id="id_client" name="id_client" required>
+            {% for client in Client.query.all() %}
+                <option value="{{ client.id_client }}" {% if client.id_client == reviews.id_client %}selected{% endif %}>{{ client.full_name }}</option>
             {% endfor %}
         </select><br>
-        <label>Rating:</label>
-        <input type="number" name="rating" value="{{ review.rating }}" min="1" max="5" required><br>
-        <label>Comments:</label>
-        <input type="text" name="comments" value="{{ review.comments }}" required><br>
-        <label>Date of Review:</label>
-        <input type="date" name="date_of_review" value="{{ review.date_of_review }}" required><br>
-        <button type="submit">Update Review</button>
+        <input type="submit" value="Update Review">
     </form>
-    <a href="{{ url_for('table_view', table_name='reviews') }}">Back to Reviews</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='reviews') }}">Back to Reviews Table</a>
 </body>
 </html>

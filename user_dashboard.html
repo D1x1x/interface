@@ -13,17 +13,13 @@
     <main>
         <h2>Список доступных таблиц</h2>
         <ul>
-            <li><a href="{{ url_for('table_view', table_name='Clients') }}">Клиенты</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Reviews') }}">Отзывы</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Payment_types') }}">Типы платежей</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Rooms') }}">Залы</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Equipment') }}">Оборудование</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Sport_types') }}">Виды спорта</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Subscriptions') }}">Абонементы</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Purchased') }}">Покупки</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Trainers') }}">Тренеры</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Schedule') }}">Расписание</a></li>
-            <li><a href="{{ url_for('table_view', table_name='Records') }}">Записи на тренировки</a></li>
+             <li><a href="{{ url_for('table_view', table_name='reviews') }}">Отзывы</a></li>
+             <li><a href="{{ url_for('table_view', table_name='rooms') }}">Залы</a></li>
+            <li><a href="{{ url_for('table_view', table_name='equipment') }}">Оборудование</a></li>
+            <li><a href="{{ url_for('table_view', table_name='sport_types') }}">Виды спорта</a></li>
+            <li><a href="{{ url_for('table_view', table_name='subscriptions') }}">Абонементы</a></li>
+            <li><a href="{{ url_for('table_view', table_name='trainers') }}">Тренеры</a></li>
+            <li><a href="{{ url_for('table_view', table_name='schedule') }}">Расписание</a></li>
         </ul>
         <a href="{{ url_for('logout') }}">Выход</a>
     </main>

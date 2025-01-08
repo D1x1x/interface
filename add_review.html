@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Review</title>
+</head>
+<body>
+    <h1>Add New Review</h1>
+    <form method="post">
+        <label for="comments">Comments:</label><br>
+        <input type="text" id="comments" name="comments" required><br>
+        <label for="rating">Rating (1-5):</label><br>
+        <input type="number" id="rating" name="rating" min="1" max="5" required><br>
+        <label for="id_client">Client:</label><br>
+        <label>Date of review:</label><br>
+        <input type="date" name="date_of_review" required><br>
+        <select id="id_client" name="id_client" required>
+            {% for client in Client.query.all() %}
+                <option value="{{ client.id_client }}">{{ client.full_name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input type="submit" value="Add Review">
+    </form>
+    <br>
+    <a href="{{ url_for('table_view', table_name='reviews') }}">Back to Reviews Table</a>
+</body>
+</html>

@@ -1,16 +1,16 @@
-<!-- add_sport_types.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Add Sport Type</title>
 </head>
 <body>
-    <h1>Add Sport Type</h1>
-    <form method="POST">
-        <label>Name:</label>
-        <input type="text" name="name" required><br>
-        <button type="submit">Add Sport Type</button>
+    <h1>Add New Sport Type</h1>
+    <form method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <input type="submit" value="Add Sport Type">
     </form>
-    <a href="{{ url_for('table_view', table_name='sport_types') }}">Back to Sport Types</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='sport_types') }}">Back to Sport Types Table</a>
 </body>
 </html>

@@ -1,18 +1,18 @@
-<!-- add_rooms.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Add Room</title>
 </head>
 <body>
-    <h1>Add Room</h1>
-    <form method="POST">
-        <label>Name:</label>
-        <input type="text" name="name" required><br>
-        <label>Capacity:</label>
-        <input type="number" name="capacity" required><br>
-        <button type="submit">Add Room</button>
+    <h1>Add New Room</h1>
+    <form method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="capacity">Capacity:</label><br>
+        <input type="number" id="capacity" name="capacity" required><br>
+        <input type="submit" value="Add Room">
     </form>
-    <a href="{{ url_for('table_view', table_name='rooms') }}">Back to Rooms</a>
+    <br>
+    <a href="{{ url_for('table_view', table_name='rooms') }}">Back to Rooms Table</a>
 </body>
 </html>

@@ -1,44 +1,49 @@
-<!-- rooms.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooms</title>
 </head>
 <body>
-    <h1>Rooms List</h1>
+    <h1>Rooms</h1>
+    <br>
+    <a href="{{ url_for('add_room') }}">Add New Room</a>
+    <br>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-    <a href="{{ url_for('add_record', table_name='rooms') }}">Add New Room</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Capacity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+            <tr>
+                <td>{{ room.id_rooms }}</td>
+                <td>{{ room.name }}</td>
+                 <td>{{ room.capacity }}</td>
+                 <td>
+                   <a href="{{ url_for('edit_room', id_rooms=room.id_rooms) }}">Edit</a>
+                   <form method="post" action="{{ url_for('delete_room', id_rooms=room.id_rooms) }}" style="display: inline;">
+                    <input type="submit" value="Delete">
+                  </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    {% if rooms %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Capacity</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for room in rooms %}
-                    <tr>
-                        <td>{{ room.id_rooms }}</td>
-                        <td>{{ room.name }}</td>
-                        <td>{{ room.capacity }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_record', table_name='rooms', id_record=room.id_rooms) }}">Edit</a>
-                            <form action="{{ url_for('delete_record', table_name='rooms', id_record=room.id_rooms) }}" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No rooms found.</p>
-    {% endif %}
+     <a href="{{ url_for('admin_dashboard' if current_user.role == 'admin' else 'user_dashboard') }}">Back to Dashboard</a>
 </body>
 </html>
